@@ -1,0 +1,6 @@
+export enum UserType {
+  ANONYMOUS = 'ANONYMOUS',
+  MEMBER = 'MEMBER',
+  PAID_MEMBER = 'PAID_MEMBER',
+  ADMIN = 'ADMIN'
+}

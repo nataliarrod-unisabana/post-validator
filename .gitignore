@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+package-lock.json
+*.log
+.env
+.DS_Store
+.vscode/
+.idea/
+perf/results/*.json
+perf/results/*.html
+!perf/results/.gitkeep
