@@ -1,17 +1,6 @@
 import { Post } from '../model/Post';
 import { PostStatus } from '../model/PostStatus';
 
-/**
- * Filtra, busca y ordena posts según diferentes criterios.
- *
- * Reglas de negocio:
- *  R1. Filtrar por status devuelve solo posts con ese status
- *  R2. Filtrar por authorId devuelve solo posts de ese autor
- *  R3. La búsqueda por título es case-insensitive
- *  R4. La búsqueda por título coincide con substring
- *  R5. Ordenar ASC/DESC funciona alfabéticamente por título
- *  R6. Si el query está vacío devuelve la lista original
- */
 export class PostFilterService {
   filterByStatus(posts: Post[], status: PostStatus): Post[] {
     return posts.filter(p => p.status === status);
@@ -22,7 +11,10 @@ export class PostFilterService {
   }
 
   searchByTitle(posts: Post[], query: string): Post[] {
-    return posts.filter(p => p.title.includes(query));
+    if (query === '') return posts;
+    return posts.filter(p => 
+      p.title.toLowerCase().includes(query.toLowerCase())
+    );
   }
 
   sortByTitle(posts: Post[], order: 'ASC' | 'DESC' = 'ASC'): Post[] {
