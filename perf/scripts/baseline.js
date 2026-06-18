@@ -1,19 +1,27 @@
-import { BASE_URL, SLOs, headers } from './common.js';
-import { check } from 'k6';
 import http from 'k6/http';
+import { sleep, check } from 'k6';
+import { BASE_URL, COMMON_THRESHOLDS, HEADERS, randomPostPayload } from './common.js';
 
 export const options = {
   vus: 1,
-  duration: '30s',
-  thresholds: {
-    http_req_duration: [`p(95) < ${SLOs.p95_latency}`],
-    http_req_failed: [`rate < ${SLOs.error_rate}`],
-  },
+  duration: '1m',
+  thresholds: COMMON_THRESHOLDS
 };
 
 export default function () {
-  const res = http.get(`${BASE_URL}/api/posts`, { headers });
-  check(res, {
-    'status is 200': (r) => r.status === 200,
+  const getRes = http.get(`${BASE_URL}/api/posts`);
+  check(getRes, {
+    'GET /api/posts → 200': (r) => r.status === 200
   });
+
+  const postRes = http.post(
+    `${BASE_URL}/api/posts`,
+    randomPostPayload(),
+    { headers: HEADERS }
+  );
+  check(postRes, {
+    'POST /api/posts → 201': (r) => r.status === 201
+  });
+
+  sleep(1);
 }

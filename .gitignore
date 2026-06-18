@@ -10,3 +10,4 @@ package-lock.json
 perf/results/*.json
 perf/results/*.html
 !perf/results/.gitkeep
+wiki.md

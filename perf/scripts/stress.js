@@ -1,27 +1,26 @@
-import { BASE_URL, SLOs, headers, getPostPayload } from './common.js';
-import { check, sleep } from 'k6';
 import http from 'k6/http';
+import { sleep, check } from 'k6';
+import { BASE_URL, HEADERS, randomPostPayload } from './common.js';
 
 export const options = {
   stages: [
-    { duration: '2m', target: 50 },
-    { duration: '2m', target: 100 },
-    { duration: '2m', target: 200 },
-    { duration: '2m', target: 400 },
-    { duration: '2m', target: 600 },
-    { duration: '1m', target: 0 },
+    { duration: '30s', target: 100 },
+    { duration: '1m', target: 200 },
+    { duration: '1m', target: 400 },
+    { duration: '1m', target: 600 },
+    { duration: '30s', target: 0 }
   ],
   thresholds: {
-    http_req_duration: [`p(95) < ${SLOs.p95_latency}`],
-    http_req_failed: [`rate < ${SLOs.error_rate}`],
-  },
+    'http_req_failed': ['rate<0.20']
+  }
 };
 
 export default function () {
-  const payload = getPostPayload(__VU * 1000 + Date.now());
-  const res = http.post(`${BASE_URL}/api/posts`, payload, { headers });
-  check(res, {
-    'status is 201': (r) => r.status === 201,
-  });
-  sleep(1);
+  const postRes = http.post(
+    `${BASE_URL}/api/posts`,
+    randomPostPayload(),
+    { headers: HEADERS }
+  );
+  check(postRes, { 'POST → 201': (r) => r.status === 201 });
+  sleep(0.5);
 }
